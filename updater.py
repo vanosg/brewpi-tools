@@ -322,72 +322,26 @@ print ""
 checkForUpdates()
 print ""
 
+### Check if /etc/brewpi/installSettings exists, if not, create and generate file
+if not os.path.isfile('/etc/brewpi/installSettings'):
+    print "Generating installSettings file..."
+    import generateInstallSettings    
+
 print "Most users will want to select the 'master' choice at each of the following menus."
 branch = raw_input("Press enter to continue... ")
 
-changed = False
-scriptPath = '/home/brewpi'
-webPath = '/var/www'
 
 print "\n\n*** Updating BrewPi script repository ***"
-for i in range(3):
-    correctRepo = False
-    try:
-        scriptRepo = git.Repo(scriptPath)
-        gitConfig = open(scriptPath + '/.git/config', 'r')
-        for line in gitConfig:
-            if "url =" in line and "brewpi-script" in line:
-                correctRepo = True
-                break
-        gitConfig.close()
-    except git.NoSuchPathError:
-        print "The path '%s' does not exist" % scriptPath
-        scriptPath = raw_input("What path did you install the BrewPi python scripts to?")
-        continue
-    except (git.InvalidGitRepositoryError, IOError):
-        print "The path '%s' does not seem to be a valid git repository" % scriptPath
-        scriptPath = raw_input("What path did you install the BrewPi python scripts to?")
-        continue
+DO THIS STILL
+changed = check_repo(scriptRepo) or changed
 
-    if not correctRepo:
-        print "The path '%s' does not seem to be the BrewPi python script git repository" % scriptPath
-        scriptPath = raw_input("What path did you install the BrewPi python scripts to?")
-        continue
-    changed = check_repo(scriptRepo) or changed
-    break
-else:
-    print "Maximum number of tries reached, updating BrewPi scripts aborted"
-
+THIS NEEDS TO GO FURTHER DOWN?
 ### Add BrewPi repo into the sys path, so we can import those modules as needed later
 sys.path.insert(0, scriptPath)
 
 print "\n\n*** Updating BrewPi web interface repository ***"
-for i in range(3):
-    correctRepo = False
-    try:
-        webRepo = git.Repo(webPath)
-        gitConfig = open(webPath + '/.git/config', 'r')
-        for line in gitConfig:
-            if "url =" in line and "brewpi-www" in line:
-                correctRepo = True
-                break
-        gitConfig.close()
-    except git.NoSuchPathError:
-        print "The path '%s' does not exist" % webPath
-        webPath = raw_input("What path did you install the BrewPi web interface scripts to? ")
-        continue
-    except (git.InvalidGitRepositoryError, IOError):
-        print "The path '%s' does not seem to be a valid git repository" % webPath
-        webPath = raw_input("What path did you install the BrewPi web interface scripts to? ")
-        continue
-    if not correctRepo:
-        print "The path '%s' does not seem to be the BrewPi web interface git repository" % webPath
-        webPath = raw_input("What path did you install the BrewPi web interface scripts to? ")
-        continue
-    changed = check_repo(webRepo) or changed
-    break
-else:
-    print "Maximum number of tries reached, updating BrewPi web interface aborted"
+DO THIS STILL
+changed = check_repo(webRepo) or changed
 
 if changed:
     print "\nOne our more repositories were updated, running runAfterUpdate.sh from %s/utils..."
@@ -504,6 +458,17 @@ if (choice is "") or (choice is "Y") or (choice is "y") or (choice is "yes") or 
         else:
             print "Skipping Arduino update"
     util.removeDontRunFile(webPath + "/do_not_run_brewpi")
+
+    ### Don't forget to update .installSettings with the new info!
+    with open("/etc/brewpi/installSettings", "r" as f:
+        lines = f.read():
+    with open("/etc/brewpi/installSettings", "w" as f:
+        for line in lines:
+            if "brewpiShield" in line:
+                f.write("brewpiShield="+shield+"\n"
+            if "brewpiVersion" in line:
+                f.write("brewpiVersion="+board+"\n"
+    
 else:
     print "Skipping Arduino update"
 

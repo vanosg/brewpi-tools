@@ -277,6 +277,22 @@ else
    echo "ERROR: Could not find fixPermissions.sh!"
 fi
 
+###########
+### Generate .installSettings file
+###########
+echo "installPath=$installPath" > $installPath/settings/.installSettings
+echo "webPath=$webPath" >> $installPath/settings/.installSettings
+echo "stdoutLogging=$installPath/logs/stdout.txt" >> $installPath/settings/.installSettings
+echo "stderrLogging=$installPath/logs/stderr.txt" >> $installPath/settings/.installSettings
+
+###########
+### Add symlink for settings file
+###########
+if [ ! -d /etc/brewpi ]; then
+    mkdir /etc/brewpi
+fi
+ln -s $installPath/settings/.installSettings /etc/brewpi/installSettings
+
 ############
 ### Install CRON job
 ############
@@ -285,28 +301,6 @@ if [ -a "$installPath"/utils/updateCron.sh ]; then
    bash "$installPath"/utils/updateCron.sh
 else
    echo "ERROR: Could not find updateCron.sh!"
-fi
-
-###########
-### Install wifi restart-er
-###########
-ifconfig -a|grep wlan
-if [ $? -eq 0 ]; then 
-    echo -e "*** *** *** ***"
-    echo -e ""
-    echo -e "I see you have a wifi adaptor configured."
-    echo -e "The wifi on a Raspberry Pi often drops out and does not reconnect for a variety of reasons."
-    read -p "Would you like to install a script to attempt to re-enable the wifi connection if it drops? [Y/n]: " wifi
-    if [ -z "$wifi" ]; then
-      wifi="Y"
-    else
-      case "$wifi" in
-        y | Y | yes | YES | Yes)
-            bash "$installPath"/utils/enableWifi.sh install;;
-        * )
-            pass;;
-      esac
-    fi
 fi
 
 ############
