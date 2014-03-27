@@ -3,11 +3,12 @@
 unset CDPATH
 myPath="$( cd "$( dirname "${BASH_SOURCE[0]}")" && pwd )"
 cd "$myPath"
+username=$(logname)
 
 active_branch=$(git symbolic-ref -q HEAD)
 active_branch=${active_branch##refs/heads/}
 
-git fetch
+sudo -u $username git fetch
 changes=$(git log HEAD..origin/"$active_branch" --oneline)
 
 if [ -z "$changes" ]; then
