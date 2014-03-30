@@ -35,6 +35,11 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
+# Make sure we're running in our git directory
+if ![ -a .git ]; then
+    echo "It doesn't seem we're running from the right place. Please make sure you are running from the brewpi-tools directory"
+fi
+
 ############
 ### Functions to catch/display errors during setup
 ############
