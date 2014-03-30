@@ -36,8 +36,15 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 # Make sure we're running in our git directory
-if ![ -a .git ]; then
+if [ ! -d .git ]; then
     echo "It doesn't seem we're running from the right place. Please make sure you are running from the brewpi-tools directory"
+    exit 1
+fi
+
+owner=$( stat -c "%U" . )
+if [ "$owner" != "pi" ] && [ "$owner" != "brewpi" ]; then
+    echo "This script needs to run from either the pi or brewpi userspace- try moving these files to /home/pi and running again" 
+    exit 1
 fi
 
 ############
