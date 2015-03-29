@@ -59,7 +59,7 @@ def checkForUpdates():
 def runAfterUpdate(scriptDir):
     try:
         print "Installing dependencies, updating CRON and fixing file permissions..."
-        subprocess.check_call(["sudo", "bash", scriptDir + "/utils/runAfterUpdate.sh"], stderr=subprocess.STDOUT)
+        subprocess.check_call(["sudo", "bash", scriptDir + "/utils/runAfterUpdate.sh" + webPath], stderr=subprocess.STDOUT)
     except subprocess.CalledProcessError:
         print "I tried to execute the runAfterUpdate.sh bash script, but an error occurred. " + \
               "Try running it from the command line in your <brewpi-script>/utils dir"

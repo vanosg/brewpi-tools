@@ -298,7 +298,7 @@ fi
 ############
 echo -e "\n***** Running fixPermissions.sh from the script repo. *****"
 if [ -a "$installPath"/utils/fixPermissions.sh ]; then
-   bash "$installPath"/utils/fixPermissions.sh
+   bash $installPath"/utils/fixPermissions.sh $webPath
 else
    echo "ERROR: Could not find fixPermissions.sh!"
 fi
