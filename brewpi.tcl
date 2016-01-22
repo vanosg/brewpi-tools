@@ -31,7 +31,6 @@ proc help {nick user hand chan text} {
 
 proc lastmodified {dir ext} {
     foreach _file [glob -directory $dir *.${ext}] { 
-        putlog "found $_file"
         set _mtime [file mtime $_file]
         if {![info exists mtime] || $_mtime > $mtime} {
             set mtime $_mtime
@@ -85,7 +84,6 @@ proc readCSV {nick user hand chan text} {
     set jsonStr [getJSON]
     set f [open ${basePath}/data/profiles/[getBeerProfile $jsonStr].csv]
     while {[gets $f line] >=0} {
-      putlog $line
       if {[catch {set timePoint [clock scan [lindex [split $line ","] 0] -format %Y-%m-%dT%H:%M:%S]}]} {
         continue
       }
@@ -98,13 +96,20 @@ proc readCSV {nick user hand chan text} {
       lappend timebinds "time * \"$moo\" {announceTime $chan}"
       dict set timeDict "$min $hour $day $mon" $tgtTemp
     }
-    putlog "my dict $timeDict"
     close $f
+}
+
+proc getNextTime {timeval} {
+    global timeDict
+
+    set currVal [lsearch [dict keys $timeDict] $timeval]
+    return [dict get $timeDict [lindex [dict keys $timeDict] [expr $currVal + 1]]]
 }
 
 proc announceTime {chan min hour day month year} {
     global timeDict
-    putserv "PRIVMSG $chan :Adjusting temperature to set point of [dict get $timeDict "$min $hour $day $month"]" 
+    set timeval "$min $hour $day $month"
+    putserv "PRIVMSG $chan :Reached set point of [dict get $timeDict "$min $hour $day $month"]. Beginning transition to [getNextTime $timeval]"
 }
 
 proc beername {nick user hand chan text} {
@@ -117,9 +122,7 @@ proc clearBinds {nick user hand chan text} {
     global timebinds
     global timeDict
     if {[info exists timebinds]} {
-      putlog hiiiii
       foreach tbind $timebinds {
-   	putlog $tbind
         unbind {*}$tbind
       }
       unset timebinds
