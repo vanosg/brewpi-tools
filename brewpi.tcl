@@ -7,6 +7,15 @@
 # It is commonly /var/www/ or /var/www/html
 set basePath "/var/www/html"
 
+# Set this to the channel you wish to announce on
+# Set to "%" if you wish to use on all channels
+set brewchan "#mybeer"
+
+# Set this to the flags of people allowed to use commands
+# Setting to * will allow anyone to use
+# Setting to n will allow only bot owners, etc
+set brewflag "*"
+
 
 ###################################
 ### Do not edit below this line ###
@@ -16,14 +25,14 @@ set basePath "/var/www/html"
 package require json
 set timeDict [dict create]
 
-bind pub * !beertemp beertemp
-bind pub * !beername beername
-bind pub * !profile profile
-bind pub * !done timeLeft
-bind pub * !help help
-bind pub * !clearbinds clearBinds
+bind pub $brewflag "$brewchan !beertemp" beertemp
+bind pub $brewflag "$brewchan !beername" beername
+bind pub $brewflag "$brewchan !profile" profile
+bind pub $brewflag "$brewchan !done" timeLeft
+bind pub $brewflag "$brewchan !help" help
+bind pub $brewflag "$brewchan !clearbinds" clearBinds
 #bind cron * "58 * * * *" readCSV
-bind pub * !foo readCSV
+bind pub $brewflag !foo readCSV
 
 proc help {nick user hand chan text} {
     putserv "PRIVMSG $chan :Available commands: !beertemp, !beername, !profile, !done"
