@@ -30,9 +30,10 @@ bind pub $brewflag "$brewchan !beername" beername
 bind pub $brewflag "$brewchan !profile" profile
 bind pub $brewflag "$brewchan !done" timeLeft
 bind pub $brewflag "$brewchan !help" help
-bind pub $brewflag "$brewchan !clearbinds" clearBinds
-#bind cron * "58 * * * *" readCSV
-bind pub $brewflag !foo readCSV
+bind cron * "58 * * * *" readCSV
+#bind pub $brewflag !foo readCSV
+#bind pub $brewflag "$brewchan !clearbinds" clearBinds
+
 
 proc help {nick user hand chan text} {
     putserv "PRIVMSG $chan :Available commands: !beertemp, !beername, !profile, !done"
